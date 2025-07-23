@@ -1,6 +1,6 @@
 # Travel Buddy 🌍✈️
 
-An intelligent AI-powered travel planning assistant that creates comprehensive trip itineraries using real-time data from multiple travel APIs.
+An intelligent AI-powered travel planning assistant that creates comprehensive trip itineraries using real-time data from multiple travel APIs. Available in multiple architectural implementations to suit different needs and preferences.
 
 ## 🌟 Features
 
@@ -9,7 +9,61 @@ An intelligent AI-powered travel planning assistant that creates comprehensive t
 - **Activity Suggestions** - TripAdvisor and GetYourGuide integration for authentic experiences
 - **Smart Budget Optimization** - AI-powered budget allocation and cost optimization
 - **Detailed Itineraries** - Day-by-day planning with booking information and practical tips
-- **Multi-Agent Architecture** - Specialized AI agents for each travel component
+- **Multiple Architecture Options** - Choose between agent-based or state machine implementations
+
+## 🏗️ Architecture Variants
+
+Travel Buddy™ comes in three different implementations:
+
+### 1. **travel_buddy_manager.py** ⭐ (Recommended)
+**Custom LangGraph State Machine Implementation**
+
+- **Architecture**: Deterministic state machine with intelligent routing
+- **Performance**: Faster execution with minimal LLM overhead
+- **Reliability**: Predictable workflow with robust error handling
+- **Type Safety**: Full TypeScript-style type checking
+- **Best For**: Production environments, cost-sensitive applications, predictable workflows
+
+```bash
+python travel_buddy_manager.py
+```
+
+**Key Benefits:**
+- ✅ Deterministic routing logic
+- ✅ Lower API costs (fewer LLM calls)
+- ✅ Better performance and reliability
+- ✅ Complete type safety
+- ✅ Easier debugging and maintenance
+
+### 2. **travel_buddy.py**
+**Multi-Agent ReAct Implementation**
+
+- **Architecture**: Specialized AI agents with LLM-driven coordination
+- **Performance**: More LLM calls for agent reasoning
+- **Flexibility**: Agents can adapt and make intelligent decisions
+- **Best For**: Complex decision-making scenarios, research environments
+
+```bash
+python travel_buddy.py
+```
+
+**Key Features:**
+- 🤖 Flight Search Agent
+- 🏨 Hotel Search Agent  
+- 🎯 Activity Recommender Agent
+- 💰 Budget Optimizer Agent
+- 📋 Itinerary Generator Agent
+
+### 3. **travel_buddy_ph.py**
+**Enhanced Multi-Agent with Improved Error Handling**
+
+- **Architecture**: Similar to travel_buddy.py with enhanced error handling
+- **Features**: Better API fallbacks and dummy data integration
+- **Best For**: Development and testing with unreliable API access
+
+```bash
+python travel_buddy_ph.py
+```
 
 ## 🚀 Quick Start
 
@@ -26,12 +80,19 @@ git clone https://github.com/rishabhagg248/travel_buddy.git
 cd travel_buddy
 ```
 
-2. Run the script (dependencies will be auto-installed):
+2. Run any of the implementations (dependencies will be auto-installed):
 ```bash
+# Recommended: State machine version
+python travel_buddy_manager.py
+
+# Or: Multi-agent version
 python travel_buddy.py
+
+# Or: Enhanced multi-agent version
+python travel_buddy_ph.py
 ```
 
-The script will automatically install required packages:
+The scripts will automatically install required packages:
 - `langchain-openai`
 - `langgraph`
 - `requests`
@@ -56,16 +117,16 @@ You'll need API keys from the following services:
 4. **TripAdvisor**: Get access at [TripAdvisor Content API](https://developer-tripadvisor.com/)
 5. **GetYourGuide**: Apply at [GetYourGuide Partner API](https://partner-help.getyourguide.com/hc/en-us/articles/4411371325597)
 
-The script will prompt you for API keys on first run.
+The scripts will prompt you for API keys on first run. For partner-only APIs, enter '0' to use dummy data.
 
 ## 🎯 Usage
 
 ### Interactive Mode
 
-Run the script and follow the prompts:
+Run any implementation and follow the prompts:
 
 ```bash
-python travel_buddy.py
+python travel_buddy_manager.py  # Recommended
 ```
 
 You'll be asked for:
@@ -78,7 +139,7 @@ You'll be asked for:
 ### Example Session
 
 ```
-Welcome to Travel Buddy™!
+Welcome to Travel Buddy™ with Custom LangGraph State Machine!
 ==================================================
 
 Let's plan your trip!
@@ -90,22 +151,52 @@ Total budget per person ($): 2000
 Number of travelers: 2
 ```
 
-## 🏗️ Architecture
+## 🔄 Architecture Comparison
 
-Travel Buddy™ uses a multi-agent architecture with specialized AI agents:
+| Feature | State Machine (`manager.py`) | Multi-Agent (`travel_buddy.py`) | Enhanced Multi-Agent (`ph.py`) |
+|---------|------------------------------|----------------------------------|--------------------------------|
+| **Performance** | ⭐⭐⭐⭐⭐ Fastest | ⭐⭐⭐ Moderate | ⭐⭐⭐ Moderate |
+| **Cost Efficiency** | ⭐⭐⭐⭐⭐ Lowest | ⭐⭐ Higher LLM usage | ⭐⭐ Higher LLM usage |
+| **Reliability** | ⭐⭐⭐⭐⭐ Deterministic | ⭐⭐⭐ Variable | ⭐⭐⭐⭐ Enhanced |
+| **Flexibility** | ⭐⭐⭐ Structured | ⭐⭐⭐⭐⭐ Highly adaptive | ⭐⭐⭐⭐ Adaptive |
+| **Type Safety** | ⭐⭐⭐⭐⭐ Full typing | ⭐⭐ Basic | ⭐⭐⭐ Improved |
+| **Error Handling** | ⭐⭐⭐⭐⭐ Robust | ⭐⭐⭐ Standard | ⭐⭐⭐⭐⭐ Enhanced |
+| **Best For** | Production | Research/Complex | Development |
 
-### Agent Flow
+## 🏗️ Technical Architecture
+
+### State Machine Flow (`travel_buddy_manager.py`)
 ```
-User Input → Flight Search → Hotel Search → Activity Recommender → Budget Optimizer → Itinerary Generator
+User Input → Extract Requirements → Get Destination Info → 
+Search Flights → Search Hotels → Search Activities → 
+Optimize Budget → Generate Itinerary → Format Response
 ```
 
-### Agents:
+### Multi-Agent Flow (`travel_buddy.py`, `travel_buddy_ph.py`)
+```
+User Input → Flight Search Agent → Hotel Search Agent → 
+Activity Recommender Agent → Budget Optimizer Agent → 
+Itinerary Generator Agent
+```
 
-1. **Flight Search Agent** - Finds optimal flights within budget
-2. **Hotel Search Agent** - Recommends accommodations based on preferences
-3. **Activity Recommender Agent** - Suggests activities based on interests
-4. **Budget Optimizer Agent** - Optimizes selections for best value
-5. **Itinerary Generator Agent** - Creates detailed day-by-day plans
+### State Machine Components:
+
+1. **Requirements Extraction** - Parse user input using regex patterns
+2. **Destination Info Lookup** - Get country, currency, and travel details
+3. **Flight Search** - Find optimal flights within budget
+4. **Hotel Search** - Recommend accommodations based on preferences
+5. **Activity Recommendations** - Suggest activities based on interests
+6. **Budget Optimization** - Optimize selections for best value
+7. **Itinerary Generation** - Create detailed day-by-day plans
+8. **Response Formatting** - Generate comprehensive travel report
+
+### Multi-Agent Components:
+
+1. **Flight Search Agent** - Specialized in flight search and booking
+2. **Hotel Search Agent** - Expert in accommodation recommendations  
+3. **Activity Recommender Agent** - Focuses on local experiences
+4. **Budget Optimizer Agent** - Analyzes costs and optimizes selections
+5. **Itinerary Generator Agent** - Creates detailed travel plans
 
 ## 📊 API Integrations
 
@@ -143,7 +234,7 @@ User Input → Flight Search → Hotel Search → Activity Recommender → Budge
 
 ## 📝 Output Format
 
-The system generates:
+All implementations generate:
 
 1. **Flight Options** with real pricing and booking tokens
 2. **Hotel Recommendations** with amenities and booking URLs
@@ -155,14 +246,16 @@ The system generates:
 
 ### Dependencies
 - **LangChain**: AI agent framework
-- **LangGraph**: Multi-agent orchestration
-- **OpenAI**: Language model for AI agents
+- **LangGraph**: Multi-agent orchestration and state machines
+- **OpenAI**: Language model for AI processing
 - **Requests**: HTTP client for API calls
+- **Typing Extensions**: Enhanced type annotations
 
 ### Error Handling
 - Automatic fallback to mock data if APIs are unavailable
 - Graceful degradation for missing API keys
 - Comprehensive error logging
+- Enhanced error recovery in `travel_buddy_ph.py`
 
 ### Rate Limiting
 - Built-in token management for Amadeus API
@@ -177,11 +270,32 @@ The system generates:
 
 ## 🚧 Development
 
-### Adding New APIs
+### Choosing the Right Implementation
 
-1. Create a new API client class in the API section
-2. Add corresponding tools using the `@tool` decorator
-3. Integrate with existing agents or create new specialized agents
+**Use `travel_buddy_manager.py` when:**
+- Building production applications
+- Cost efficiency is important
+- You need predictable, reliable workflows
+- Type safety is a priority
+- Debugging and maintenance ease matters
+
+**Use `travel_buddy.py` when:**
+- You need maximum flexibility
+- Complex decision-making is required
+- Research or experimental use cases
+- Agent reasoning is beneficial
+
+**Use `travel_buddy_ph.py` when:**
+- Developing with unreliable API access
+- Testing with dummy data
+- Need enhanced error handling
+- Working in development environments
+
+### Adding New Features
+
+1. **State Machine**: Add new node functions and update routing logic
+2. **Multi-Agent**: Create new specialized agents or enhance existing ones
+3. **APIs**: Add new API client classes and integrate with existing tools
 
 ### Extending Functionality
 
@@ -203,7 +317,8 @@ The modular architecture makes it easy to add:
 1. Fork the repository
 2. Create a feature branch
 3. Add your improvements
-4. Submit a pull request
+4. Test with all three implementations
+5. Submit a pull request
 
 ## 📄 License
 
@@ -215,13 +330,14 @@ If you encounter issues:
 
 1. Check that all API keys are valid
 2. Verify internet connection
-3. Review API documentation for any service changes
-4. Open an issue with error details
+3. Try different implementations based on your needs
+4. Review API documentation for any service changes
+5. Open an issue with error details and implementation used
 
 ## 🔮 Roadmap
 
-- [ ] Web interface
-- [ ] Mobile app
+- [ ] Web interface for all implementations
+- [ ] Mobile app version
 - [ ] Real-time price alerts
 - [ ] Group travel planning
 - [ ] Multi-destination trips
@@ -229,9 +345,15 @@ If you encounter issues:
 - [ ] Weather integration
 - [ ] Currency conversion
 - [ ] Travel insurance recommendations
+- [ ] Hybrid architecture combining state machine efficiency with agent flexibility
 
 ---
 
 **Happy Travels!** 🎒✨
 
-*Built with ❤️ using AI agents and real travel APIs*
+*Built with ❤️ using AI agents, state machines, and real travel APIs*
+
+**Choose Your Adventure:**
+- 🚀 **Fast & Reliable**: `travel_buddy_manager.py`
+- 🤖 **Intelligent & Flexible**: `travel_buddy.py`  
+- 🛠️ **Enhanced Development**: `travel_buddy_ph.py`
