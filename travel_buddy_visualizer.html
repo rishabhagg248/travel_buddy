@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Travel Buddy State Machine Graph</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            font-weight: 700;
+        }
+
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .legend-circle {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+        }
+
+        .start { background: #27ae60; }
+        .process { background: #3498db; }
+        .decision { background: #f39c12; }
+        .end { background: #e74c3c; }
+
+        .graph-container {
+            position: relative;
+            width: 100%;
+            height: 800px;
+            background: rgba(248, 249, 250, 0.8);
+            border-radius: 15px;
+            border: 2px solid #e9ecef;
+            margin-bottom: 30px;
+            overflow: visible;
+        }
+
+        .step {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 18px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            z-index: 10;
+        }
+
+        .step:hover {
+            transform: scale(1.1);
+            z-index: 20;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .step-start { background: linear-gradient(135deg, #27ae60, #2ecc71); }
+        .step-process { background: linear-gradient(135deg, #3498db, #5dade2); }
+        .step-decision { background: linear-gradient(135deg, #f39c12, #f7dc6f); color: #2c3e50; }
+        .step-end { background: linear-gradient(135deg, #e74c3c, #ec7063); }
+
+        /* Fixed positions - using calc() for responsive centering */
+        .step-1 { 
+            top: 50px; 
+            left: calc(50% - 30px);
+        }
+        .step-2 { 
+            top: 150px; 
+            left: calc(50% - 30px);
+        }
+        .step-3 { 
+            top: 250px; 
+            left: calc(50% - 30px);
+        }
+        
+        /* Processing steps in a row */
+        .step-4 { 
+            top: 350px; 
+            left: calc(10% - 30px);
+        }
+        .step-5 { 
+            top: 350px; 
+            left: calc(25% - 30px);
+        }
+        .step-6 { 
+            top: 350px; 
+            left: calc(40% - 30px);
+        }
+        .step-7 { 
+            top: 350px; 
+            left: calc(55% - 30px);
+        }
+        .step-8 { 
+            top: 350px; 
+            left: calc(70% - 30px);
+        }
+        
+        /* Final steps */
+        .step-9 { 
+            top: 500px; 
+            left: calc(30% - 30px);
+        }
+        .step-10 { 
+            top: 500px; 
+            left: calc(60% - 30px);
+        }
+        .step-11 { 
+            top: 650px; 
+            left: calc(50% - 30px);
+        }
+
+        .flow-line {
+            position: absolute;
+            background: #34495e;
+            z-index: 5;
+        }
+
+        .vertical-line {
+            width: 4px;
+            border-radius: 2px;
+        }
+
+        .horizontal-line {
+            height: 4px;
+            border-radius: 2px;
+        }
+
+        /* Flow lines - fixed positioning */
+        .line-1-2 { 
+            top: 120px; 
+            left: calc(50% - 2px); 
+            height: 20px; 
+        }
+        .line-2-3 { 
+            top: 220px; 
+            left: calc(50% - 2px); 
+            height: 20px; 
+        }
+        .line-3-center { 
+            top: 320px; 
+            left: calc(50% - 2px); 
+            height: 20px; 
+        }
+        
+        /* Horizontal line to processing row */
+        .line-center-row { 
+            top: 378px; 
+            left: 10%; 
+            width: 60%; 
+        }
+        
+        /* Processing to final */
+        .line-process-final { 
+            top: 420px; 
+            left: calc(50% - 2px); 
+            height: 70px; 
+        }
+        
+        /* Final line */
+        .line-final-end { 
+            top: 570px; 
+            left: calc(50% - 2px); 
+            height: 70px; 
+        }
+
+        .tooltip {
+            position: absolute;
+            background: rgba(44, 62, 80, 0.95);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            font-size: 14px;
+            line-height: 1.4;
+            max-width: 300px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            z-index: 30;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+            pointer-events: none;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .tooltip.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -8px;
+            border-width: 8px;
+            border-style: solid;
+            border-color: rgba(44, 62, 80, 0.95) transparent transparent transparent;
+        }
+
+        .tooltip h4 {
+            margin: 0 0 8px 0;
+            color: #3498db;
+            font-size: 16px;
+        }
+
+        .tooltip p {
+            margin: 0;
+            font-size: 13px;
+        }
+
+        .info-panel {
+            margin-top: 30px;
+            padding: 25px;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 15px;
+            border-left: 5px solid #3498db;
+        }
+
+        .info-title {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+
+        .execution-flow {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .flow-item {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            border-left: 4px solid #3498db;
+        }
+
+        .flow-number {
+            display: inline-block;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            background: #3498db;
+            color: white;
+            text-align: center;
+            line-height: 25px;
+            font-weight: 700;
+            margin-right: 10px;
+            font-size: 12px;
+        }
+
+        /* Responsive breakpoints */
+        @media (max-width: 1200px) {
+            .step {
+                width: 50px;
+                height: 50px;
+                font-size: 16px;
+            }
+            
+            .step-1 { left: calc(50% - 25px); }
+            .step-2 { left: calc(50% - 25px); }
+            .step-3 { left: calc(50% - 25px); }
+            .step-4 { left: calc(10% - 25px); }
+            .step-5 { left: calc(25% - 25px); }
+            .step-6 { left: calc(40% - 25px); }
+            .step-7 { left: calc(55% - 25px); }
+            .step-8 { left: calc(70% - 25px); }
+            .step-9 { left: calc(30% - 25px); }
+            .step-10 { left: calc(60% - 25px); }
+            .step-11 { left: calc(50% - 25px); }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .graph-container {
+                height: 900px;
+            }
+            
+            .step {
+                width: 45px;
+                height: 45px;
+                font-size: 14px;
+            }
+            
+            .tooltip {
+                max-width: 250px;
+                font-size: 12px;
+            }
+            
+            /* Mobile layout - stack processing steps */
+            .step-1 { left: calc(50% - 22.5px); }
+            .step-2 { left: calc(50% - 22.5px); }
+            .step-3 { left: calc(50% - 22.5px); }
+            .step-4 { top: 350px; left: calc(20% - 22.5px); }
+            .step-5 { top: 350px; left: calc(80% - 22.5px); }
+            .step-6 { top: 420px; left: calc(20% - 22.5px); }
+            .step-7 { top: 420px; left: calc(80% - 22.5px); }
+            .step-8 { top: 490px; left: calc(50% - 22.5px); }
+            .step-9 { top: 580px; left: calc(30% - 22.5px); }
+            .step-10 { top: 580px; left: calc(70% - 22.5px); }
+            .step-11 { top: 700px; left: calc(50% - 22.5px); }
+            
+            .line-center-row { display: none; }
+            .line-process-final { top: 550px; }
+            .line-final-end { top: 650px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌍 Travel Buddy State Machine Flow</h1>
+        
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-circle start"></div>
+                <span>Start/End</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-circle process"></div>
+                <span>Processing</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-circle decision"></div>
+                <span>Decision</span>
+            </div>
+        </div>
+
+        <div class="graph-container">
+            <!-- Flow lines -->
+            <div class="flow-line vertical-line line-1-2"></div>
+            <div class="flow-line vertical-line line-2-3"></div>
+            <div class="flow-line vertical-line line-3-center"></div>
+            <div class="flow-line horizontal-line line-center-row"></div>
+            <div class="flow-line vertical-line line-process-final"></div>
+            <div class="flow-line vertical-line line-final-end"></div>
+
+            <!-- Steps -->
+            <div class="step step-start step-1" data-step="1">1</div>
+            <div class="step step-process step-2" data-step="2">2</div>
+            <div class="step step-decision step-3" data-step="3">3</div>
+            <div class="step step-process step-4" data-step="4">4</div>
+            <div class="step step-process step-5" data-step="5">5</div>
+            <div class="step step-process step-6" data-step="6">6</div>
+            <div class="step step-process step-7" data-step="7">7</div>
+            <div class="step step-process step-8" data-step="8">8</div>
+            <div class="step step-process step-9" data-step="9">9</div>
+            <div class="step step-process step-10" data-step="10">10</div>
+            <div class="step step-end step-11" data-step="11">11</div>
+
+            <!-- Tooltips -->
+            <div class="tooltip" id="tooltip-1">
+                <h4>START - User Input</h4>
+                <p>User provides travel requirements including destination, departure city, dates, budget, number of travelers, and activity preferences.</p>
+            </div>
+
+            <div class="tooltip" id="tooltip-2">
+                <h4>Extract Requirements</h4>
+                <p>Parses user input using regex patterns to extract structured data: destination, dates, budget, travelers, and preferences. Converts natural language into TravelPlanState.</p>
+            </div>
+
+            <div class="tooltip" id="tooltip-3">
+                <h4>Intelligent Router</h4>
+                <p>Examines current state and determines which processing node should execute next. Makes deterministic decisions based on data availability, not LLM reasoning.</p>
+            </div>
+
+            <div class="tooltip" id="tooltip-4">
+                <h4>Get Destination Info</h4>
+                <p>Retrieves destination information including country, currency, language, timezone, best travel times, popular districts, and local transportation options.</p>
+            </div>
+
+            <div class="tooltip" id="tooltip-5">
+                <h4>Search Flights</h4>
+                <p>Searches for flights using Amadeus API with real-time pricing and availability. Filters results by budget constraints and returns booking tokens.</p>
+            </div>
+
+            <div class="tooltip" id="tooltip-6">
+                <h4>Search Hotels</h4>
+                <p>Finds hotels using Booking.com and Amadeus APIs. Includes real pricing, ratings, amenities, and location data with budget filtering and booking URLs.</p>
+            </div>
+
+            <div class="tooltip" id="tooltip-7">
+                <h4>Search Activities</h4>
+                <p>Recommends activities using TripAdvisor and GetYourGuide APIs. Matches user preferences (culture, food, adventure) with local attractions and experiences.</p>
+            </div>
+
+            <div class="tooltip" id="tooltip-8">
+                <h4>Optimize Budget</h4>
+                <p>Analyzes all flight, hotel, and activity options to select the best combination within budget constraints using value-based optimization algorithms.</p>
+            </div>
+
+            <div class="tooltip" id="tooltip-9">
+                <h4>Generate Itinerary</h4>
+                <p>Creates detailed day-by-day itinerary with specific timing, costs, booking information, and practical travel advice for each day of the trip.</p>
+            </div>
+
+            <div class="tooltip" id="tooltip-10">
+                <h4>Format Response</h4>
+                <p>Formats comprehensive travel report with all booking details, cost breakdowns, itinerary, and step-by-step instructions for the user.</p>
+            </div>
+
+            <div class="tooltip" id="tooltip-11">
+                <h4>END - Final Output</h4>
+                <p>Delivers complete travel plan with flights, hotels, activities, detailed itinerary, booking information, and budget breakdown to the user.</p>
+            </div>
+        </div>
+
+        <div class="info-panel">
+            <div class="info-title">🔄 State Machine Execution Flow</div>
+            <div class="execution-flow">
+                <div class="flow-item">
+                    <span class="flow-number">1</span>
+                    <strong>Linear Start:</strong> User input → Extract requirements → Router decision
+                </div>
+                <div class="flow-item">
+                    <span class="flow-number">2</span>
+                    <strong>Dynamic Processing:</strong> Router determines which data collection step is needed next
+                </div>
+                <div class="flow-item">
+                    <span class="flow-number">3</span>
+                    <strong>State Updates:</strong> Each processing node updates state and returns to router
+                </div>
+                <div class="flow-item">
+                    <span class="flow-number">4</span>
+                    <strong>Cycle Completion:</strong> Router continues until all required data is collected
+                </div>
+                <div class="flow-item">
+                    <span class="flow-number">5</span>
+                    <strong>Final Processing:</strong> Generate itinerary and format comprehensive response
+                </div>
+                <div class="flow-item">
+                    <span class="flow-number">6</span>
+                    <strong>Output Delivery:</strong> Complete travel plan delivered to user
+                </div>
+            </div>
+        </div>
+
+        <div class="info-panel">
+            <div class="info-title">⚡ Router Decision Logic</div>
+            <p>The intelligent router uses this deterministic logic to decide the next step:</p>
+            <div style="background: #2c3e50; color: #ecf0f1; padding: 15px; border-radius: 8px; font-family: 'Courier New', monospace; margin-top: 15px; overflow-x: auto;">
+def route_to_next_node(state: TravelPlanState) -> str:
+    if state.get("error_occurred"):
+        return "format_final_response"    # Step 10
+    if not state.get("destination"):
+        return "extract_requirements"     # Step 2
+    if not state.get("destination_info"):
+        return "get_destination_info"     # Step 4
+    if not state.get("flights_data"):
+        return "search_flights"           # Step 5
+    if not state.get("hotels_data"):
+        return "search_hotels"            # Step 6
+    if not state.get("activities_data"):
+        return "search_activities"        # Step 7
+    if not state.get("optimization_complete"):
+        return "optimize_budget"          # Step 8
+    if not state.get("itinerary"):
+        return "generate_itinerary"       # Step 9
+    return "format_final_response"        # Step 10
+            </div>
+        </div>
+
+        <div class="info-panel">
+            <div class="info-title">🎯 Key Advantages</div>
+            <div class="execution-flow">
+                <div class="flow-item">
+                    <span class="flow-number">✓</span>
+                    <strong>Deterministic:</strong> Predictable flow based on state conditions
+                </div>
+                <div class="flow-item">
+                    <span class="flow-number">⚡</span>
+                    <strong>Fast:</strong> Direct function calls, no LLM reasoning for routing
+                </div>
+                <div class="flow-item">
+                    <span class="flow-number">💰</span>
+                    <strong>Cost-Effective:</strong> Minimal LLM usage reduces API costs
+                </div>
+                <div class="flow-item">
+                    <span class="flow-number">🛡️</span>
+                    <strong>Type Safe:</strong> Full TypeScript-style type checking
+                </div>
+                <div class="flow-item">
+                    <span class="flow-number">🔧</span>
+                    <strong>Debuggable:</strong> Clear state transitions for easy troubleshooting
+                </div>
+                <div class="flow-item">
+                    <span class="flow-number">🔄</span>
+                    <strong>Reliable:</strong> Consistent behavior without unpredictable decisions
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const steps = document.querySelectorAll('.step');
+        const tooltips = document.querySelectorAll('.tooltip');
+
+        steps.forEach(step => {
+            step.addEventListener('mouseenter', function(e) {
+                const stepNumber = this.getAttribute('data-step');
+                const tooltip = document.getElementById(`tooltip-${stepNumber}`);
+                
+                if (tooltip) {
+                    // Position tooltip above the step
+                    const rect = this.getBoundingClientRect();
+                    const containerRect = document.querySelector('.graph-container').getBoundingClientRect();
+                    
+                    tooltip.style.left = (rect.left - containerRect.left - 120) + 'px';
+                    tooltip.style.top = (rect.top - containerRect.top - tooltip.offsetHeight - 15) + 'px';
+                    
+                    // If tooltip would go above container, position it below
+                    if (rect.top - containerRect.top < 100) {
+                        tooltip.style.top = (rect.bottom - containerRect.top + 15) + 'px';
+                        tooltip.style.transform = 'translateY(0)';
+                    }
+                    
+                    tooltip.classList.add('show');
+                }
+            });
+
+            step.addEventListener('mouseleave', function() {
+                const stepNumber = this.getAttribute('data-step');
+                const tooltip = document.getElementById(`tooltip-${stepNumber}`);
+                
+                if (tooltip) {
+                    tooltip.classList.remove('show');
+                }
+            });
+        });
+
+        // Close tooltips when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!e.target.classList.contains('step')) {
+                tooltips.forEach(tooltip => {
+                    tooltip.classList.remove('show');
+                });
+            }
+        });
+    </script>
+</body>
+</html>
