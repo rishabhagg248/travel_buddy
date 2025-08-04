@@ -14,9 +14,9 @@ An intelligent AI-powered travel planning assistant that creates comprehensive t
 
 ## 🏗️ Architecture Variants
 
-Travel Buddy™ comes in three different implementations plus an interactive visualization:
+Travel Buddy™ comes in four different implementations plus an interactive visualization:
 
-### 1. **travel_buddy_manager.py** ⭐ (Recommended)
+### 1. **travel_buddy_manager.py** ⭐ (Recommended for Production)
 **Custom LangGraph State Machine Implementation**
 
 - **Architecture**: Deterministic state machine with intelligent routing
@@ -36,7 +36,27 @@ python travel_buddy_manager.py
 - ✅ Complete type safety
 - ✅ Easier debugging and maintenance
 
-### 2. **travel_buddy.py**
+### 2. **travel_buddy_command.py** ⭐ (Recommended for Development)
+**Command-Line State Machine with Enhanced Manager**
+
+- **Architecture**: State machine with intelligent manager node and command routing
+- **Performance**: Optimized execution with smart decision-making
+- **Features**: Advanced state management with Command-based routing
+- **Type Safety**: Full TypedDict state management
+- **Best For**: Development environments, testing workflows, command-line usage
+
+```bash
+python travel_buddy_command.py
+```
+
+**Key Features:**
+- 🎯 **Intelligent Manager Node** - Smart routing decisions
+- 🔄 **Command-based Routing** - Precise state transitions
+- 📊 **Comprehensive State Tracking** - Full workflow visibility
+- 🛠️ **Enhanced Error Recovery** - Robust failure handling
+- 💻 **Interactive CLI** - User-friendly command-line interface
+
+### 3. **travel_buddy.py**
 **Multi-Agent ReAct Implementation**
 
 - **Architecture**: Specialized AI agents with LLM-driven coordination
@@ -55,7 +75,7 @@ python travel_buddy.py
 - 💰 Budget Optimizer Agent
 - 📋 Itinerary Generator Agent
 
-### 3. **travel_buddy_ph.py**
+### 4. **travel_buddy_ph.py**
 **Enhanced Multi-Agent with Improved Error Handling**
 
 - **Architecture**: Similar to travel_buddy.py with enhanced error handling
@@ -66,7 +86,7 @@ python travel_buddy.py
 python travel_buddy_ph.py
 ```
 
-### 4. **travel_buddy_visualizer.html** 📊
+### 5. **travel_buddy_visualizer.html** 📊
 **Interactive State Machine Visualization**
 
 - **Purpose**: Visual representation of the state machine architecture
@@ -104,13 +124,16 @@ cd travel_buddy
 
 2. Run any of the implementations (dependencies will be auto-installed):
 ```bash
-# Recommended: State machine version
+# Recommended for production: State machine version
 python travel_buddy_manager.py
 
-# Or: Multi-agent version
+# Recommended for development: Command-line state machine
+python travel_buddy_command.py
+
+# Multi-agent version
 python travel_buddy.py
 
-# Or: Enhanced multi-agent version
+# Enhanced multi-agent version
 python travel_buddy_ph.py
 ```
 
@@ -148,7 +171,8 @@ The scripts will prompt you for API keys on first run. For partner-only APIs, en
 Run any implementation and follow the prompts:
 
 ```bash
-python travel_buddy_manager.py  # Recommended
+python travel_buddy_command.py  # Recommended for development
+python travel_buddy_manager.py  # Recommended for production
 ```
 
 You'll be asked for:
@@ -177,8 +201,8 @@ open travel_buddy_visualizer.html
 ### Example Session
 
 ```
-Welcome to Travel Buddy™ with Custom LangGraph State Machine!
-==================================================
+Welcome to Travel Buddy™ with Intelligent Manager!
+======================================================================
 
 Let's plan your trip!
 Where would you like to travel? Paris
@@ -191,20 +215,21 @@ Number of travelers: 2
 
 ## 🔄 Architecture Comparison
 
-| Feature | State Machine (`manager.py`) | Multi-Agent (`travel_buddy.py`) | Enhanced Multi-Agent (`ph.py`) | Visualizer (`visualizer.html`) |
-|---------|------------------------------|----------------------------------|--------------------------------|---------------------------------|
-| **Performance** | ⭐⭐⭐⭐⭐ Fastest | ⭐⭐⭐ Moderate | ⭐⭐⭐ Moderate | N/A - Visualization Only |
-| **Cost Efficiency** | ⭐⭐⭐⭐⭐ Lowest | ⭐⭐ Higher LLM usage | ⭐⭐ Higher LLM usage | N/A - Static Content |
-| **Reliability** | ⭐⭐⭐⭐⭐ Deterministic | ⭐⭐⭐ Variable | ⭐⭐⭐⭐ Enhanced | N/A - Educational Tool |
-| **Flexibility** | ⭐⭐⭐ Structured | ⭐⭐⭐⭐⭐ Highly adaptive | ⭐⭐⭐⭐ Adaptive | N/A - Documentation |
-| **Type Safety** | ⭐⭐⭐⭐⭐ Full typing | ⭐⭐ Basic | ⭐⭐⭐ Improved | N/A - HTML/CSS/JS |
-| **Error Handling** | ⭐⭐⭐⭐⭐ Robust | ⭐⭐⭐ Standard | ⭐⭐⭐⭐⭐ Enhanced | N/A - No Processing |
-| **Best For** | Production | Research/Complex | Development | Understanding Architecture |
-| **User Experience** | Command Line | Command Line | Command Line | Interactive Web Interface |
+| Feature | State Machine (`manager.py`) | Command State Machine (`command.py`) | Multi-Agent (`travel_buddy.py`) | Enhanced Multi-Agent (`ph.py`) | Visualizer (`visualizer.html`) |
+|---------|------------------------------|---------------------------------------|----------------------------------|--------------------------------|---------------------------------|
+| **Performance** | ⭐⭐⭐⭐⭐ Fastest | ⭐⭐⭐⭐⭐ Fastest | ⭐⭐⭐ Moderate | ⭐⭐⭐ Moderate | N/A - Visualization Only |
+| **Cost Efficiency** | ⭐⭐⭐⭐⭐ Lowest | ⭐⭐⭐⭐⭐ Lowest | ⭐⭐ Higher LLM usage | ⭐⭐ Higher LLM usage | N/A - Static Content |
+| **Reliability** | ⭐⭐⭐⭐⭐ Deterministic | ⭐⭐⭐⭐⭐ Deterministic | ⭐⭐⭐ Variable | ⭐⭐⭐⭐ Enhanced | N/A - Educational Tool |
+| **Flexibility** | ⭐⭐⭐ Structured | ⭐⭐⭐⭐ Enhanced Structure | ⭐⭐⭐⭐⭐ Highly adaptive | ⭐⭐⭐⭐ Adaptive | N/A - Documentation |
+| **Type Safety** | ⭐⭐⭐⭐⭐ Full typing | ⭐⭐⭐⭐⭐ Full typing | ⭐⭐ Basic | ⭐⭐⭐ Improved | N/A - HTML/CSS/JS |
+| **Error Handling** | ⭐⭐⭐⭐⭐ Robust | ⭐⭐⭐⭐⭐ Robust | ⭐⭐⭐ Standard | ⭐⭐⭐⭐⭐ Enhanced | N/A - No Processing |
+| **Developer Experience** | ⭐⭐⭐ Good | ⭐⭐⭐⭐⭐ Excellent | ⭐⭐⭐ Good | ⭐⭐⭐ Good | ⭐⭐⭐⭐⭐ Educational |
+| **CLI Interface** | ⭐⭐⭐ Basic | ⭐⭐⭐⭐⭐ Enhanced | ⭐⭐⭐ Basic | ⭐⭐⭐ Basic | N/A - Web Interface |
+| **Best For** | Production | Development/Testing | Research/Complex | Development | Understanding Architecture |
 
 ## 🏗️ Technical Architecture
 
-### State Machine Flow (`travel_buddy_manager.py`)
+### State Machine Flow (`travel_buddy_manager.py`, `travel_buddy_command.py`)
 ```
 User Input → Extract Requirements → Get Destination Info → 
 Search Flights → Search Hotels → Search Activities → 
@@ -228,6 +253,14 @@ Itinerary Generator Agent
 6. **Budget Optimization** - Optimize selections for best value
 7. **Itinerary Generation** - Create detailed day-by-day plans
 8. **Response Formatting** - Generate comprehensive travel report
+
+### Enhanced Command State Machine Features (`travel_buddy_command.py`):
+
+- **Intelligent Manager Node** - Makes routing decisions based on current state
+- **Command-based Navigation** - Uses LangGraph Commands for precise routing
+- **State Validation** - Comprehensive state checking and validation
+- **Enhanced CLI** - Better user interaction and progress feedback
+- **Robust Error Recovery** - Advanced error handling and recovery mechanisms
 
 ### Multi-Agent Components:
 
@@ -294,7 +327,7 @@ All implementations generate:
 - Automatic fallback to mock data if APIs are unavailable
 - Graceful degradation for missing API keys
 - Comprehensive error logging
-- Enhanced error recovery in `travel_buddy_ph.py`
+- Enhanced error recovery in `travel_buddy_ph.py` and `travel_buddy_command.py`
 
 ### Rate Limiting
 - Built-in token management for Amadeus API
@@ -313,10 +346,17 @@ All implementations generate:
 
 **Use `travel_buddy_manager.py` when:**
 - Building production applications
-- Cost efficiency is important
+- Cost efficiency is crucial
 - You need predictable, reliable workflows
 - Type safety is a priority
-- Debugging and maintenance ease matters
+- Performance is critical
+
+**Use `travel_buddy_command.py` when:**
+- Developing and testing new features
+- You want enhanced CLI experience
+- Need detailed state tracking and debugging
+- Want intelligent routing with full control
+- Building prototypes or proof-of-concepts
 
 **Use `travel_buddy.py` when:**
 - You need maximum flexibility
@@ -340,8 +380,9 @@ All implementations generate:
 ### Adding New Features
 
 1. **State Machine**: Add new node functions and update routing logic
-2. **Multi-Agent**: Create new specialized agents or enhance existing ones
-3. **APIs**: Add new API client classes and integrate with existing tools
+2. **Command State Machine**: Add new nodes and update manager decision logic
+3. **Multi-Agent**: Create new specialized agents or enhance existing ones
+4. **APIs**: Add new API client classes and integrate with existing tools
 
 ### Extending Functionality
 
@@ -363,7 +404,7 @@ The modular architecture makes it easy to add:
 1. Fork the repository
 2. Create a feature branch
 3. Add your improvements
-4. Test with all three implementations
+4. Test with all implementations
 5. Submit a pull request
 
 ## 📄 License
@@ -386,7 +427,7 @@ If you encounter issues:
 ### Understanding the Architecture
 1. **Start with the Visualizer** - Open `travel_buddy_visualizer.html` to see the flow
 2. **Read the Code** - Compare the state machine vs agent implementations
-3. **Test Different Approaches** - Try all three Python implementations
+3. **Test Different Approaches** - Try all four Python implementations
 4. **Monitor Performance** - Compare execution times and API costs
 
 ### Educational Value
@@ -415,13 +456,15 @@ If you encounter issues:
 *Built with ❤️ using AI agents, state machines, and real travel APIs*
 
 **Choose Your Adventure:**
-- 🚀 **Fast & Reliable**: `travel_buddy_manager.py`
+- 🚀 **Production Ready**: `travel_buddy_manager.py`
+- 💻 **Development Friendly**: `travel_buddy_command.py`
 - 🤖 **Intelligent & Flexible**: `travel_buddy.py`  
 - 🛠️ **Enhanced Development**: `travel_buddy_ph.py`
 - 📊 **Interactive Learning**: `travel_buddy_visualizer.html`
 
 **Quick Start Guide:**
 1. **New to the project?** → Start with `travel_buddy_visualizer.html`
-2. **Want to run it?** → Use `travel_buddy_manager.py`
-3. **Need flexibility?** → Try `travel_buddy.py`
-4. **Developing/Testing?** → Use `travel_buddy_ph.py`
+2. **Want to build something?** → Use `travel_buddy_manager.py`
+3. **Want to develop/test?** → Use `travel_buddy_command.py`
+4. **Need flexibility?** → Try `travel_buddy.py`
+5. **Developing/Testing?** → Use `travel_buddy_ph.py`
